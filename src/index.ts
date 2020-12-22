@@ -12,10 +12,7 @@ import axios, {
 } from 'axios';
 import tunnel from 'tunnel';
 import { get, set, omit, pick } from 'lodash';
-// import { DefaultError } from './error';
-// import { logger as rootLogger, Logger } from './logger';
-// import redis, { RedisClient } from './redis';
-// import { DatabaseConnection } from '../database';
+import { DefaultError } from '@fjedi/errors';
 
 type TodoAny = any;
 
@@ -70,6 +67,7 @@ export class HTTPClient {
   client: AxiosInstance;
   redis: TodoAny;
   cachePeriod: number;
+  requestTimeout: number;
   getDataFromResponse: (response: AxiosResponse) => any;
   getErrorFromResponse: (error: AxiosError) => any;
   // @ts-ignore: will be done later
@@ -114,8 +112,8 @@ export class HTTPClient {
     const ip = get(context, 'state.clientIP');
     //
     this.baseURL = baseURL;
-    // this.redis = redis;
     this.cachePeriod = cachePeriod;
+    this.requestTimeout = timeout || 30000;
     //
     this.getDataFromResponse =
       typeof getDataFromResponse === 'function' ? getDataFromResponse : (res) => res.data;
@@ -375,7 +373,7 @@ export class HTTPClient {
     url: string,
     data?: { [k: string]: any },
     headers?: AxiosHeaders,
-    config?: { cachePeriod: number },
+    config?: { cachePeriod?: number; timeout?: number },
   ): Promise<T> {
     const { getDataFromResponse, getErrorFromResponse } = this;
     const cachePeriod =
@@ -383,6 +381,7 @@ export class HTTPClient {
 
     // @ts-ignore
     const method: Method = m.toUpperCase();
+    let requestTimeoutHandlerId;
     try {
       let cacheKey;
       // @ts-ignore
@@ -395,10 +394,18 @@ export class HTTPClient {
         }
       }
       const { responseType, ...otherHeaders } = headers || {};
+      //
+      const requestTrack = axios.CancelToken.source();
+      requestTimeoutHandlerId = setTimeout(() => {
+        requestTrack.cancel();
+      }, config?.timeout || this.requestTimeout);
+      //
       const requestOptions: RequestConfig = {
         url,
         method,
         headers: otherHeaders,
+        timeout: config?.timeout,
+        cancelToken: requestTrack.token,
       };
       if (responseType) {
         requestOptions.responseType = responseType;
@@ -418,6 +425,16 @@ export class HTTPClient {
       }
       return responseData;
     } catch (error) {
+      //
+      if (requestTimeoutHandlerId) {
+        clearTimeout(requestTimeoutHandlerId);
+      }
+      if (axios.isCancel(error)) {
+        throw new DefaultError('Request has been canceled due to timeout', {
+          meta: { method: m, url, data, headers, config },
+        });
+      }
+      //
       throw getErrorFromResponse(error);
     }
   }
