@@ -41,7 +41,7 @@ export interface RequestConfig extends AxiosRequestConfig {
   extendField?: string;
 }
 
-export type AxiosHeaders = {
+export type Headers = {
   responseType?: ResponseType;
   'Content-Type'?: string;
 };
@@ -374,7 +374,7 @@ export class HTTPClient {
     m: Method,
     url: string,
     data?: { [k: string]: any },
-    headers?: AxiosHeaders,
+    headers?: Headers,
     config?: { cachePeriod?: number; timeout?: number },
   ): Promise<T> {
     const { getDataFromResponse, getErrorFromResponse } = this;
