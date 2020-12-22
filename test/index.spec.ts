@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { redis } from '@fjedi/redis-client';
 import { HTTPClient } from '../src';
 
 const params = {
@@ -8,6 +8,10 @@ const params = {
 const client = new HTTPClient(params);
 
 describe('Test http client', function () {
+  afterAll(async () => {
+    redis.end(true);
+  });
+
   it('Get ethereum fee estimation', async function () {
     const result = await client.sendRequest('GET', '/', {
       module: 'gastracker',

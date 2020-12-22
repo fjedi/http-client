@@ -13,10 +13,9 @@ import axios, {
 import tunnel from 'tunnel';
 import { get, set, omit, pick } from 'lodash';
 import { DefaultError } from '@fjedi/errors';
+import { redis } from '@fjedi/redis-client';
 
 type TodoAny = any;
-
-const redis = null;
 
 //
 export type HTTPClientProps = {
@@ -40,11 +39,11 @@ export interface RequestConfig extends AxiosRequestConfig {
   extendField?: string;
 }
 
-type AxiosHeaders = {
+export type AxiosHeaders = {
   responseType?: ResponseType;
 };
 
-type AxiosAgentProps = {
+export type AxiosAgentProps = {
   proxy?: AxiosProxyConfig;
 };
 
