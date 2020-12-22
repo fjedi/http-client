@@ -17,6 +17,8 @@ import { redis } from '@fjedi/redis-client';
 
 type TodoAny = any;
 
+export type Response = AxiosResponse;
+
 //
 export type HTTPClientProps = {
   baseURL: string;
@@ -29,7 +31,7 @@ export type HTTPClientProps = {
   databaseLogging?: boolean | TodoAny;
   auth?: AxiosBasicCredentials;
   validateStatus?: (status: number) => boolean;
-  getDataFromResponse?: (response: AxiosResponse) => any;
+  getDataFromResponse?: (response: Response) => any;
   getErrorFromResponse?: (error: AxiosError) => any;
   transformRequest?: AxiosTransformer | AxiosTransformer[];
   transformResponse?: AxiosTransformer | AxiosTransformer[];
@@ -41,6 +43,7 @@ export interface RequestConfig extends AxiosRequestConfig {
 
 export type AxiosHeaders = {
   responseType?: ResponseType;
+  'Content-Type'?: string;
 };
 
 export type AxiosAgentProps = {
