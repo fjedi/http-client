@@ -1,7 +1,7 @@
 name: Build and publish
 on:
   push:
-    branches: [master]
+    branches: [master, main]
 jobs:
   publish:
     runs-on: ubuntu-latest
