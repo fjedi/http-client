@@ -17,7 +17,7 @@ import { redis } from '@fjedi/redis-client';
 
 type TodoAny = any;
 
-export { Method, ResponseType } from 'axios';
+export type { Method, ResponseType } from 'axios';
 export type Response = AxiosResponse;
 export type BasicAuthCredentials = AxiosBasicCredentials;
 export type ProxyConfig = AxiosProxyConfig;
