@@ -24,7 +24,7 @@ export type ProxyConfig = AxiosProxyConfig;
 
 //
 export type HTTPClientProps = {
-  baseURL: string;
+  baseURL?: string;
   threads?: number;
   timeout?: number;
   cachePeriod?: number;
