@@ -15,7 +15,7 @@ import { get, set, omit, pick } from 'lodash';
 import { DefaultError } from '@fjedi/errors';
 import { redis } from '@fjedi/redis-client';
 
-type TodoAny = any;
+type TodoAny = unknown;
 
 export type { Method, ResponseType } from 'axios';
 export type Response = AxiosResponse;
@@ -28,14 +28,14 @@ export type HTTPClientProps = {
   threads?: number;
   timeout?: number;
   cachePeriod?: number;
-  headers?: any;
+  headers?: AxiosRequestConfig['headers'];
   proxy?: AxiosProxyConfig;
   withCredentials?: boolean;
   databaseLogging?: boolean | TodoAny;
   auth?: AxiosBasicCredentials;
   validateStatus?: (status: number) => boolean;
-  getDataFromResponse?: (response: Response) => any;
-  getErrorFromResponse?: (error: AxiosError) => any;
+  getDataFromResponse?: (response: Response) => Response['data'];
+  getErrorFromResponse?: (error: AxiosError) => TodoAny;
   transformRequest?: AxiosTransformer | AxiosTransformer[];
   transformResponse?: AxiosTransformer | AxiosTransformer[];
 };
@@ -73,8 +73,8 @@ export class HTTPClient {
   redis: TodoAny;
   cachePeriod: number;
   requestTimeout: number;
-  getDataFromResponse: (response: AxiosResponse) => any;
-  getErrorFromResponse: (error: AxiosError) => any;
+  getDataFromResponse: (response: AxiosResponse) => Response['data'];
+  getErrorFromResponse: (error: AxiosError) => TodoAny;
   // @ts-ignore: will be done later
   validateStatus: (status: number) => boolean;
   pendingRequests = 0;
@@ -376,7 +376,7 @@ export class HTTPClient {
   async sendRequest<T>(
     m: Method,
     url: string,
-    data?: { [k: string]: any },
+    data?: { [k: string]: TodoAny },
     headers?: Headers,
     config?: { cachePeriod?: number; timeout?: number },
   ): Promise<T> {
@@ -424,7 +424,7 @@ export class HTTPClient {
       const responseData = getDataFromResponse(res);
       // @ts-ignore
       if (method === 'GET' && redis && cachePeriod && typeof cacheKey === 'string') {
-        // PX - miliseconds
+        // PX - milliseconds
         // @ts-ignore
         redis.set(cacheKey, JSON.stringify(responseData), 'PX', cachePeriod);
       }
