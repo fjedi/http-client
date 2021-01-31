@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@types/expect": "24.3.0",
-    "@types/jest": "26.0.19",
+    "@types/jest": "26.0.20",
     "@types/lodash": "4.14.168",
     "@types/node": "14.14.22",
     "@types/tunnel": "0.0.1",
