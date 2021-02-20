@@ -42,7 +42,7 @@
     "@fjedi/errors": "1.1.2",
     "@fjedi/redis-client": "1.0.2",
     "axios": "0.21.1",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "tunnel": "0.0.6"
   },
   "devDependencies": {
