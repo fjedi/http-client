@@ -430,17 +430,18 @@ export class HTTPClient {
       }
       return responseData;
     } catch (error) {
+      const e = error as AxiosError;
       //
       if (requestTimeoutHandlerId) {
         clearTimeout(requestTimeoutHandlerId);
       }
-      if (axios.isCancel(error)) {
+      if (axios.isCancel(e)) {
         throw new DefaultError('Request has been canceled due to timeout', {
           meta: { method: m, url, data, headers, config },
         });
       }
       //
-      throw getErrorFromResponse(error);
+      throw getErrorFromResponse(e);
     }
   }
 }
