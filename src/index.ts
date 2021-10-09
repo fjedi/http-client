@@ -45,6 +45,7 @@ export interface RequestConfig extends AxiosRequestConfig {
 }
 
 export type Headers = {
+  [k: string]: string | undefined;
   responseType?: ResponseType;
   'Content-Type'?: string;
 };
@@ -193,6 +194,9 @@ export class HTTPClient {
       //
       const userAgent = get(proxy, 'userAgent');
       if (userAgent) {
+        if (!clientProps.headers) {
+          clientProps.headers = {};
+        }
         clientProps.headers['User-Agent'] = userAgent;
       }
       //
@@ -245,7 +249,9 @@ export class HTTPClient {
         let { data = {} } = queryConfig;
         //
         const filteredHeaders = {};
-        //
+        if (!queryConfig.headers) {
+          queryConfig.headers = {};
+        }
         Object.keys(queryConfig.headers).forEach((headerKey) => {
           //
           const privateHeader =
@@ -408,7 +414,7 @@ export class HTTPClient {
       const requestOptions: RequestConfig = {
         url,
         method,
-        headers: otherHeaders,
+        headers: otherHeaders as Record<string, string>,
         timeout: config?.timeout,
         cancelToken: requestTrack.token,
       };
