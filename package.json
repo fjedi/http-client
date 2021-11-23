@@ -41,7 +41,7 @@
   "dependencies": {
     "@fjedi/errors": "1.1.4",
     "@fjedi/redis-client": "1.166.0",
-    "axios": "0.22.0",
+    "axios": "0.24.0",
     "lodash": "4.17.21",
     "tunnel": "0.0.6"
   },
